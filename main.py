@@ -1,191 +1,80 @@
-
+import pandas as pd
 from bs4 import BeautifulSoup as bs, ResultSet
 import requests as rq
 import re
+from matplotlib import pyplot as plt
+
+
+import scraper
 
 
 class Movie:
 
-    def __init__(self, imdb_id):
-        self.imdb_id = imdb_id
-
-    def get_movie_name(self):
-
-        uml = f'https://www.imdb.com/title/{self.imdb_id}/'
-        result = rq.get(uml)
-        doc = bs(result.text,'html.parser')
-
-        h1 = doc.find('h1')
-        return h1.text.strip()
-
-    def get_year(self):
-        uml = f'https://www.imdb.com/title/{self.imdb_id}/'
-        result = rq.get(uml)
-        doc = bs(result.text,'html.parser')
-
-        li = doc.find('li', {'role':'presentation'})
-
-        a = li.find('a')
-        return a.text.strip()
-
-    def get_rating(self):
-        uml = f'https://www.imdb.com/title/{self.imdb_id}/'
-        result = rq.get(uml)
-        doc = bs(result.text,'html.parser')
-
-        regex = re.compile('.*AggregateRatingButton.*')
-
-        span = doc.find('span', class_= regex)
-
-        if span is None:
-            return
-
-        return span.text.strip()
-
-    def get_genres(self):
-        uml = f'https://www.imdb.com/title/{self.imdb_id}/'
-        result = rq.get(uml)
-        doc = bs(result.text,'html.parser')
-
-        genres = []
-
-        a_genres = doc.find_all('a',class_='GenresAndPlot__GenreChip-cum89p-3 fzmeux ipc-chip ipc-chip--on-baseAlt')
-        for gen in a_genres:
-            genre= gen.find('span', class_='ipc-chip__text').text
-            genres.append(genre)
-        return genres
-
-
+    def __init__(self, actor_id, movie_id, name, year, rating, genres):
+        self.actor_id = actor_id
+        self.movie_id = movie_id
+        self.name = name
+        self.year = year
+        self.rating = rating
+        self.genres = genres
 
 
 class Award:
 
-    def __init__(self,award_imdb_id, year, outcome, description):
+    def __init__(self, award_imdb_id, year, outcome, description):
         self.award_imdb_id = award_imdb_id
         self.year = year
         self.outcome = outcome
         self.description = description
 
     def get_award_name(self):
-        uml =f'https://www.imdb.com/event/{self.award_imdb_id}/{self.year}/1'
+        uml = f'https://www.imdb.com/event/{self.award_imdb_id}/{self.year}/1'
         result = rq.get(uml)
 
-        doc = bs(result.text,'html.parser')
+        doc = bs(result.text, 'html.parser')
 
         name = doc.find('h1').text.strip()
 
         return name
 
 
-
-
-
-
-
 class Actor:
 
-    def __init__(self, name , pic, pos, imdb_id ):
-        self.name=name
-        self.pic=pic
-        self.pos=pos
-        self.imdb_id=imdb_id
-
-
+    def __init__(self, imdb_id, name, pic_link, pos, birth_name, birth_date, nickname, hight, bio, movies):
+        self.imdb_id = imdb_id
+        self.name = name
+        self.pic_link = pic_link
+        self.pos = pos
+        self.birth_name = birth_name
+        self.birth_date = birth_date
+        self.nickname = nickname
+        self.hight = hight
+        self.bio = bio
+        self.movies = movies
 
     def __str__(self):
-        return f'actor(name={self.name}, pic={self.pic}, pos={self.pos}, imdb_id= {self.imdb_id} )'
+        return f'actor ( name = {self.name})'
 
     def __repr__(self):
-        return f'actor(name={self.name}, pic={self.pic}, pos={self.pos}, imdb_id= {self.imdb_id} )'
+        return f'actor ( name = {self.name})'
 
-    def get_birth_date(self):
-        uml=f'https://www.imdb.com/name/{self.imdb_id}/bio?ref_=nm_ov_bio_sm'
+    def get_all_unique_movie_genres(self):
+        genres_set = set()
+        movies = self.movies
+        for movie in movies:
+            genres = movie.genres
+            for genre in genres:
+                genres_set.add(genre)
 
-        result = rq.get(uml)
-        doc = bs(result.text,"html.parser")
-        return doc.find("time")["datetime"]
+        genre_list = list(genres_set)
+        return genre_list
 
-    def get_birth_name(self):
-        uml = f'https://www.imdb.com/name/{self.imdb_id}/bio?ref_=nm_ov_bio_sm'
-        result = rq.get(uml)
-        doc = bs(result.text, "html.parser")
-
-        table = doc.find('table', id='overviewTable')
-        birth_name=table.find('td',text='Birth Name')
-
-        if birth_name is None:
-            return
-
-        return birth_name.find_next_sibling().text.strip()
-
-    def get_nickname(self):
-        uml = f'https://www.imdb.com/name/{self.imdb_id}/bio?ref_=nm_ov_bio_sm'
-        result = rq.get(uml)
-        doc = bs(result.text, "html.parser")
-
-        table = doc.find('table', id='overviewTable')
-
-        nickname=table.find('td',text='Nickname')
-
-        if nickname is None:
-            return
-
-        return nickname.find_next_sibling().text.strip()
-
-    def get_hight(self):
-        uml = f'https://www.imdb.com/name/{self.imdb_id}/bio?ref_=nm_ov_bio_sm'
-        result = rq.get(uml)
-        doc = bs(result.text, "html.parser")
-
-        table = doc.find('table', id='overviewTable')
-
-        height=table.find('td',text='Height')
-
-        if height is None:
-            return
-        return height.find_next_sibling().text.strip()
-
-    def get_born_place(self):
-        uml = f'https://www.imdb.com/name/{self.imdb_id}/bio?ref_=nm_ov_bio_sm'
-        result = rq.get(uml)
-        doc = bs(result.text, "html.parser")
-
-        table = doc.find('table', id='overviewTable')
-
-        place = table.find_all('a')[2]
-
-        return place.text.strip()
-
-    def get_movies(self):
-
-        uml = f'https://www.imdb.com/name/{self.imdb_id}/'
-        result = rq.get(uml)
-        doc = bs(result.text, "html.parser")
-
-        movies = []
-
-        actor_div = doc.find('div', class_='filmo-category-section')
-
-        odd = actor_div.find_all('div', class_= 'filmo-row odd')
-        even = actor_div.find_all('div', class_= 'filmo-row even')
-        movie_list = []
-        movie_list.extend(odd)
-        movie_list.extend(even)
-
-        for movie_id in movie_list:
-            movie_imdb_id = re.findall('tt[0-9][0-9][0-9][0-9][0-9][0-9][0-9]', movie_id['id'])[0]
-            movie = Movie(movie_imdb_id)
-            movies.append(movie)
-
-        return movies
-
+    # Todo Remove method after implemant awards
     def get_awards(self):
-        uml=f'https://www.imdb.com/name/{self.imdb_id}/awards?ref_=nm_awd'
+        uml = f'https://www.imdb.com/name/{self.imdb_id}/awards?ref_=nm_awd'
         result = rq.get(uml)
         doc = bs(result.text, "html.parser")
         awards = []
-
-
 
         tables = doc.find_all('table', class_='awards')
 
@@ -193,73 +82,134 @@ class Actor:
             tr = table.find('tr')
 
             # get award year
-            td = tr.find('td',class_='award_year')
-            a =td.find('a')
-            award_imdb_id = re.findall('ev[0-9][0-9][0-9][0-9][0-9][0-9][0-9]',a['href'])[0]
+            td = tr.find('td', class_='award_year')
+            a = td.find('a')
+            award_imdb_id = re.findall('ev[0-9][0-9][0-9][0-9][0-9][0-9][0-9]', a['href'])[0]
 
             year = a.text.strip()
 
-            td=tr.find('td',class_='award_outcome')
-            b=td.find('b')
-            outcome=b.text.strip()
+            td = tr.find('td', class_='award_outcome')
+            b = td.find('b')
+            outcome = b.text.strip()
 
             td = tr.find('td', class_='award_description')
             description = td.text
 
-            award = Award(award_imdb_id,year,outcome,description)
+            award = Award(award_imdb_id, year, outcome, description)
 
             awards.append(award)
         return awards
 
+    def calc_average_rating_aver_all(self):
+        avg = 0
+        count = 0
+        for movie in self.movies:
+            if not pd.isna(movie.rating):
+                avg = avg + movie.rating
+                count = count + 1
+
+        avg = avg / count
+        return avg
+
+    def calc_average_for_all_years(self):
+
+        df = pd.read_csv('movies.csv')
+        df = df[df['actor_id'] == self.imdb_id]
+
+        yr_df = df[['year', 'rating']]
+
+        # drop none and nan from df
+        yr_df = yr_df.dropna()
+
+        # group by year calc avr and sort by a descending order
+        avg_per_year = yr_df.groupby(['year']).mean(['rating'])
+        # avg_per_year_sorted_after_year=avg_per_year.sort_values(by=['year'],ascending=False)
+        # print(avg_per_year_sorted_after_year)
+
+        avg_per_year_df = avg_per_year.reset_index()
+
+        x = avg_per_year_df['year']
+        y = avg_per_year_df['rating']
+
+        plt.title(f'Average of {self.name}s movie Rating per year')
+        plt.ylabel(f'Rating')
+        plt.xlabel('year')
+        plt.plot(x, y)
+        plt.show()
+
+    def get_top_X_movies(self, number):
+
+        rated_movies = []
+
+        for mov in self.movies:
+            if not pd.isna(mov.rating):
+                rated_movies.append(mov)
+
+        sorted_movies = sorted(rated_movies, key=lambda Movie: Movie.rating,reverse=True)
+        if len(sorted_movies) <= number:
+            return sorted_movies
+
+        return_list = []
+        for x in range(0, number + 1):
+            return_list.append(sorted_movies[x])
+        return return_list
 
 
-def get_top50_actors(uml):
+def get_all_actor_info():
+    actors_df = pd.read_csv('actors.csv')
+    movies_df = pd.read_csv('movies.csv')
 
+    # Todo implemant and scrabe Awards
 
-    result = rq.get(uml)
-    open('actors.html','wb').write(result.content);
+    actors = []
 
-    top_50_actor_html=open('actors.html','r')
+    for index, row in actors_df.iterrows():
+        imdb_id = row['imdb_id']
+        name = row['name']
+        pic_link = row['pic_link']
+        pos = row['pos']
+        birth_name = row['birth_name']
+        birth_date = row['birth_date']
+        nickname = row['nickname']
+        hight = row['hight']
+        bio = row['bio']
 
-    doc = bs(top_50_actor_html,"html.parser")
-    top_50_list = doc.find_all("div",{'class':'lister-item mode-detail'})
+        movies = []
+        movies_df = movies_df[movies_df['actor_id'] == imdb_id]
 
-    actors=[]
-    pos = 0
-    for item in top_50_list:
+        for i, movies_row in movies_df.iterrows():
+            actor_id = movies_row['actor_id']
+            movie_id = movies_row['movie_id']
+            movie_name = movies_row['name']
+            year = movies_row['year']
+            rating = movies_row['rating']
+            genres = eval(movies_row['genres'])  # eval -> convert '[ a , b, c ]' from  String to a list
+            movie = Movie(actor_id, movie_id, movie_name, year, rating, genres)
+            movies.append(movie)
 
-        a_tag = item.find('a')
-        img = a_tag.find('img')
+        # TODO same for awards
 
-        alt = img['alt']
-        src = img['src']
-        # get imdb id with regex expression , for example nm0000136 -> Johnny Depp
-        imdb_id = re.findall('nm[0-9][0-9][0-9][0-9][0-9][0-9][0-9]',a_tag['href'])[0]
+        actor1 = Actor(imdb_id, name, pic_link, pos, birth_name, birth_date, nickname, hight, bio, movies)
 
-        name = alt
-        pic_link = src
-        pos += 1
-        a = Actor(name=name, pos=pos, pic=pic_link, imdb_id=imdb_id)
-        actors.append(a)
-
+        actors.append(actor1)
 
     return actors
 
 
-
-if __name__=='__main__':
-    uml = f'https://www.imdb.com/list/ls053501318/'
-    actors = get_top50_actors(uml)
-
-    for actor in  actors:
-        print(actor.get_birth_name())
+def fuctiTest():
+    return "test 123 123"
 
 
-    #movies = actors[0].get_movies()
+if __name__ == '__main__':
+    # scraper.start_scraping()
 
+    actors = get_all_actor_info()
+    actor = actors[0]
+    # actor.get_all_unique_movie_genres()
+    # print(actor.calc_average_rating_aver_all())
+    # actor.calc_average_for_all_years()
 
+    for movie in actor.get_top_X_movies(1000):
+        print(f"Movie : {movie.name} ranking {movie.rating}/10 ")
 
-    #for movie in movies:
-     #   print(movie.get_genres())
-
-
+    print('End')
