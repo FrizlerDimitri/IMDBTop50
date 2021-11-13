@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+      <link rel="stylesheet" href="/static/css/main.css"  type="text/css"/>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Top 50</title>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-dark bg-dark">
+  <a class="navbar-brand" href="#">Top 50 Actresses and Actors</a>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+          <a class="nav-link" href="#"><p >Home</p>p> <span class="sr-only">(current)</span></a>
+      </li>
+
+    </ul>
+  </div>
+    </nav>
+
+     <div class="position-middle-10">
+       <div class="position-middle-min-max" >
+           <div class="flexbox-container justify-content-space-around">
+            <div class="actor-img">
+                <img class="" src ={{actor.pic_link}}>
+            </div>
+            <div class="actor-name flexbox-item flexbox-item-show ">
+                <h1>{{actor.name}}</h1>
+            </div>
+        </div>
+
+           <div class="flexbox-container position-middle-min-max">
+                <div class = "button-bar position-middle-min-max justify-content-space-around" >
+
+                    <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#collapseBio" data-parent="#button-bar-id" aria-expanded="false" aria-controls="collapseBio">Mini Bio</button>
+                    <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#collapseMovie" data-parent="#button-bar-id" aria-expanded="false" aria-controls="collapseBio">Movies</button>
+                    <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#" data-parent="#button-bar-id" aria-expanded="false" aria-controls="collapseBio">Awards</button>
+
+
+                <div class="content-button-bar" id = "button-bar-id">
+                    <div class="collapse" id="collapseBio" data-parent="#button-bar-id" >
+                        <div class = 'bio'>
+                            <p>
+                                {{actor.bio}}
+                            </p>
+                        </div>
+                    </div>
+                    <div class = "collapse movie-table" id="collapseMovie" data-parent="#button-bar-id">
+                            <table class="table">
+                          <thead class="thead-dark">
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col">Movie</th>
+                                <th scope="col">year</th>
+                                <th scope="col">rating</th>
+                                <th scope="col">genres</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for movie in actor.movies %}
+                            <tr>
+
+                              <th scope="row"></th>
+                                <td>{{movie.name}}</td>
+                                <td>{{movie.year}}</td>
+                                <td>{{movie.rating}}</td>
+                                <td>
+                                {{movie.genres}}
+                                </td>
+                             {% endfor %}
+
+                            </tr>
+
+                          </tbody>
+                        </table>
+                        </div>
+                </div >
+            </div>
+           </div>
+
+
+
+
+        <!--<p>{{actor.bio}}</p>-->
+      </div>
+     </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>

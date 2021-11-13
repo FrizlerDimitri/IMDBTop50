@@ -4,7 +4,6 @@ import requests as rq
 import re
 from matplotlib import pyplot as plt
 
-
 import scraper
 
 
@@ -40,7 +39,7 @@ class Award:
 
 class Actor:
 
-    def __init__(self, imdb_id, name, pic_link, pos, birth_name, birth_date, nickname, hight, bio, movies):
+    def __init__(self, imdb_id, name, pic_link, pos, birth_name, birth_date, nickname, hight, bio, movies=[]):
         self.imdb_id = imdb_id
         self.name = name
         self.pic_link = pic_link
@@ -58,16 +57,43 @@ class Actor:
     def __repr__(self):
         return f'actor ( name = {self.name})'
 
+    # call load_movie() methode before using this methode
     def get_all_unique_movie_genres(self):
         genres_set = set()
         movies = self.movies
-        for movie in movies:
-            genres = movie.genres
+        for mo in movies:
+            genres = mo.genres
             for genre in genres:
                 genres_set.add(genre)
 
         genre_list = list(genres_set)
         return genre_list
+
+
+
+    #loading movies from csv, needed to be called before using movie related functions
+    def load_movies(self):
+        movies_df = pd.read_csv('movies.csv')
+        movies = []
+        movies_df = movies_df[movies_df['actor_id'] == self.imdb_id]
+        print(movies_df)
+
+        for i, movies_row in movies_df.iterrows():
+            actor_id = movies_row['actor_id']
+            movie_id = movies_row['movie_id']
+            movie_name = movies_row['name']
+            year = movies_row['year']
+            rating = movies_row['rating']
+            genres = eval(movies_row['genres'])  # eval -> convert '[ a , b, c ]' from  String to a list
+            move = Movie(actor_id, movie_id, movie_name, year, rating, genres)
+            movies.append(move)
+
+        self.movies=movies
+
+
+
+
+
 
     # Todo Remove method after implemant awards
     def get_awards(self):
@@ -100,12 +126,13 @@ class Actor:
             awards.append(award)
         return awards
 
+    # call load_movie() methode before using this methode
     def calc_average_rating_aver_all(self):
         avg = 0
         count = 0
-        for movie in self.movies:
-            if not pd.isna(movie.rating):
-                avg = avg + movie.rating
+        for m in self.movies:
+            if not pd.isna(m.rating):
+                avg = avg + m.rating
                 count = count + 1
 
         avg = avg / count
@@ -137,6 +164,7 @@ class Actor:
         plt.plot(x, y)
         plt.show()
 
+    # call load_movie() methode before using this methode
     def get_top_X_movies(self, number):
 
         rated_movies = []
@@ -145,7 +173,7 @@ class Actor:
             if not pd.isna(mov.rating):
                 rated_movies.append(mov)
 
-        sorted_movies = sorted(rated_movies, key=lambda Movie: Movie.rating,reverse=True)
+        sorted_movies = sorted(rated_movies, key=lambda Movie: Movie.rating, reverse=True)
         if len(sorted_movies) <= number:
             return sorted_movies
 
@@ -155,13 +183,13 @@ class Actor:
         return return_list
 
 
+
+    # for performance sake will not load the movies, you need to call the load_movies() methode for each actor first
 def get_all_actor_info():
     actors_df = pd.read_csv('actors.csv')
-    movies_df = pd.read_csv('movies.csv')
-
     # Todo implemant and scrabe Awards
 
-    actors = []
+    acts = []
 
     for index, row in actors_df.iterrows():
         imdb_id = row['imdb_id']
@@ -174,42 +202,18 @@ def get_all_actor_info():
         hight = row['hight']
         bio = row['bio']
 
-        movies = []
-        movies_df = movies_df[movies_df['actor_id'] == imdb_id]
-
-        for i, movies_row in movies_df.iterrows():
-            actor_id = movies_row['actor_id']
-            movie_id = movies_row['movie_id']
-            movie_name = movies_row['name']
-            year = movies_row['year']
-            rating = movies_row['rating']
-            genres = eval(movies_row['genres'])  # eval -> convert '[ a , b, c ]' from  String to a list
-            movie = Movie(actor_id, movie_id, movie_name, year, rating, genres)
-            movies.append(movie)
-
         # TODO same for awards
 
-        actor1 = Actor(imdb_id, name, pic_link, pos, birth_name, birth_date, nickname, hight, bio, movies)
+        actor1 = Actor(imdb_id, name, pic_link, pos, birth_name, birth_date, nickname, hight, bio)
 
-        actors.append(actor1)
+        acts.append(actor1)
 
-    return actors
-
-
-def fuctiTest():
-    return "test 123 123"
+    return acts
 
 
 if __name__ == '__main__':
-    # scraper.start_scraping()
 
     actors = get_all_actor_info()
-    actor = actors[0]
-    # actor.get_all_unique_movie_genres()
-    # print(actor.calc_average_rating_aver_all())
-    # actor.calc_average_for_all_years()
+    actor = actors[4]
 
-    for movie in actor.get_top_X_movies(1000):
-        print(f"Movie : {movie.name} ranking {movie.rating}/10 ")
 
-    print('End')

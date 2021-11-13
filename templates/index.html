@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <!-- Required meta tags -->
@@ -6,14 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-      <link rel="stylesheet" href="style.css"  type="text/css" >
+      <link rel="stylesheet" href="static/css/main.css"  type="text/css"/>
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <title>Top 50 Movie Stars</title>
   </head>
+
   <body>
-
-
     <nav class="navbar navbar-dark bg-dark">
   <a class="navbar-brand" href="#">Top 50 Actresses and Acters</a>
 
@@ -27,20 +26,70 @@
   </div>
 </nav>
 
-<div>
-    <ul class="list-group">
+<div class="position-middle-10" >
+
+    <div class="position-middle-min-max">
+        <ul class="list-group">
       {% for actor in actors %}
 
       <!--  pos, birth_name, birth_date, nickname  -->
           <li class="list-group-item">
-            <img height="100" width="70" src={{actor.pic_link}} alt={{actor.name}}>
-            <p>Postion: {{actor.pos}}<p>
-            <p>Name {{actor.name}}
+              <div class="center-div">
+                  <h5 class="mt-0">{{actor.pos}}. {{actor.name}}</h5>
+              </div>
+
+
+              <div class="row g-0 bg-light position-relative">
+
+                  <div class="col-md-4 mb-md-0 p-md-4">
+                      <div class="pic-content-middle ">
+                          <img src={{actor.pic_link}}  alt={{actor.name}}>
+                      </div>
+
+                  </div>
+                  <div class="col-md-8 p-4 ps-md-0">
+                      <!-- birth_name,birth_date,nickname,hight -->
+                        <div class="container">
+                              <div class="row">
+                                  {% if actor.birth_date != 'None' %}
+                                <div class="col-4"> Birth date     </div> <div class="col-8">{{actor.birth_date}}</div>
+                                  {% endif %}
+                              </div>
+
+                              <div class="row">
+                                  {% if actor.birth_name != 'None' %}
+                                <div class="col-4"> Birth name     </div> <div class="col-8">{{actor.birth_name}}</div>
+                                  {% endif %}
+                              </div>
+                              <div class="row">
+                                  {% if actor.nickname != 'None'  %}
+                                    <div class="col-4">nickname      </div> <div class="col-8">{{actor.nickname}}</div>
+                                  {% endif %}
+                              </div>
+                              <div class="row">
+                                  {% if actor.hight != 'None' %}
+                                <div class="col-4">height      </div> <div class="col-8">{{actor.hight}}</div>
+                                  {% endif %}
+                              </div>
+
+
+                        </div>
+                        <!--<p>Another instance of placeholder content for this other custom component. It is intended to mimic what some real-world content would look like, and we're using it here to give the component a bit of body and size.</p>-->
+
+                  </div>
+
+              </div>
+                <div class="center-div">
+                    <a href="/Top50/{{actor.imdb_id}}" class="stretched-link">More about {{actor.name}} </a>
+                </div>
+
           </li>
 
       {% endfor %}
 
-</ul>
+    </ul></div>
+
+
 
 
 
