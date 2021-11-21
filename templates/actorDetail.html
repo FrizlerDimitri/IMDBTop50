@@ -35,22 +35,25 @@
             <div class="actor-name flexbox-item flexbox-item-show ">
                 <h1>{{actor.name}}</h1>
             </div>
+               <div flexbox-container justify-content-space-around > <h1> {{avg_over_all}}/10</h1></div>
         </div>
 
            <div class="flexbox-container position-middle-min-max">
                 <div class = "button-bar position-middle-min-max justify-content-space-around" >
 
-                    <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#collapseBio" data-parent="#button-bar-id" aria-expanded="false" aria-controls="collapseBio">Mini Bio</button>
-                    <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#collapseMovie" data-parent="#button-bar-id" aria-expanded="false" aria-controls="collapseBio">Movies</button>
-                    <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#" data-parent="#button-bar-id" aria-expanded="false" aria-controls="collapseBio">Awards</button>
-
+                    <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#collapseBio" data-parent="#button-bar-id" aria-expanded="false" >Mini Bio</button>
+                    <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#collapseMovie" data-parent="#button-bar-id" aria-expanded="false" >Movies</button>
+                    <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#collapseAward" data-parent="#button-bar-id" aria-expanded="false">Awards</button>
+                    <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#collapseGenres" data-parent="#button-bar-id" aria-expanded="false" >Genres</button>
+                    <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#collapseTop5Movies" data-parent="#button-bar-id" aria-expanded="false" >Top 5</button>
+                    <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#collapseAvgYear" data-parent="#button-bar-id" aria-expanded="false" >Avg per year</button>
 
                 <div class="content-button-bar" id = "button-bar-id">
-                    <div class="collapse" id="collapseBio" data-parent="#button-bar-id" >
+                    <div class="collapse minibio" id="collapseBio" data-parent="#button-bar-id" >
                         <div class = 'bio'>
-                            <p>
+
                                 {{actor.bio}}
-                            </p>
+
                         </div>
                     </div>
                     <div class = "collapse movie-table" id="collapseMovie" data-parent="#button-bar-id">
@@ -70,11 +73,21 @@
 
                               <th scope="row"></th>
                                 <td>{{movie.name}}</td>
-                                <td>{{movie.year}}</td>
-                                <td>{{movie.rating}}</td>
-                                <td>
-                                {{movie.genres}}
-                                </td>
+
+                                {% if pd.isnull(movie.year) %}
+                                    <td>In production</td>
+                                {% else %}
+                                    <td>{{movie.year}}</td>
+                                {% endif %}
+
+
+                                {% if np.isnan(movie.rating) %}
+                                    <td>In production</td>
+                                {% else %}
+                                    <td>{{movie.rating}}</td>
+                                {% endif %}
+
+                                <td>{{', '.join(movie.genres)}}</td>
                              {% endfor %}
 
                             </tr>
@@ -82,12 +95,71 @@
                           </tbody>
                         </table>
                         </div>
+                    <div class = "collapse award-table" id="collapseAward" data-parent="#button-bar-id">
+                        <table class="table">
+                          <thead class="thead-dark">
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col">Award</th>
+                                <th scope="col">year</th>
+                                <th scope="col">Outcome</th>
+                                <th scope="col">Description</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for award in actor.awards %}
+                            <tr>
+
+                              <th scope="row"></th>
+                                <td>{{award.award_name}}</td>
+                                <td>{{award.year}}</td>
+                                <td>{{award.outcome}}</td>
+                                <td>{{award.description}}</td>
+                             {% endfor %}
+
+                            </tr>
+
+                          </tbody>
+                        </table>
+
+
+                    </div>
+                    <div class = "collapse unique-genres" id="collapseGenres" data-parent="#button-bar-id">
+                        <ul class="list-group">
+                            {% for genre in genres %}
+                                <li class="list-group-item">{{genre}}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class = "collapse movie-table" id="collapseTop5Movies" data-parent="#button-bar-id">
+                            <table class="table">
+                              <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Movie</th>
+                                    <th scope="col">year</th>
+                                    <th scope="col">rating</th>
+                                    <th scope="col">genres</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for i ,movie in top_5_movies  %}
+                                <tr>
+                                  <th scope="row">{{i}}</th>
+                                    <td>{{movie.name}}</td>
+                                    <td>{{movie.year}}</td>
+                                    <td>{{movie.rating}}</td>
+                                    <td>{{movie.genres}}</td>
+                                 {% endfor %}
+                                </tr>
+                              </tbody>
+                            </table>
+                        </div>
+                    <img class = "collapse movie-year-rating" id="collapseAvgYear" data-parent="#button-bar-id" src='data:image/png;base64,{{rating_all_years}}' />
+
                 </div >
             </div>
            </div>
-
-
-
 
         <!--<p>{{actor.bio}}</p>-->
       </div>

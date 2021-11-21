@@ -32,7 +32,7 @@
         <ul class="list-group">
       {% for actor in actors %}
 
-      <!--  pos, birth_name, birth_date, nickname  -->
+      <!--  pos, birth_name, birth_info, nickname  -->
           <li class="list-group-item">
               <div class="center-div">
                   <h5 class="mt-0">{{actor.pos}}. {{actor.name}}</h5>
@@ -48,11 +48,11 @@
 
                   </div>
                   <div class="col-md-8 p-4 ps-md-0">
-                      <!-- birth_name,birth_date,nickname,hight -->
+                      <!-- birth_name,birth_info,nickname,hight -->
                         <div class="container">
                               <div class="row">
-                                  {% if actor.birth_date != 'None' %}
-                                <div class="col-4"> Birth date     </div> <div class="col-8">{{actor.birth_date}}</div>
+                                  {% if actor.birth_info != 'None' %}
+                                <div class="col-4"> Birth      </div> <div class="col-8">{{actor.birth_info}}</div>
                                   {% endif %}
                               </div>
 

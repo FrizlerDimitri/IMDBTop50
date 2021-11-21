@@ -7,6 +7,7 @@
 .position-middle-min-max {
     margin: auto;
     max-width: 800px;
+    min-width: 800px;
 
 }
 
@@ -28,9 +29,15 @@
 }
 .content-button-bar{
     margin : 5px;
+    align-content: center;
 }
 .button-bar{
     justify-content: space-between;
+    min-width: 800px;
+    margin-left: 2px;
+    margin-right: 2px;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 
 .flexbox-container{
