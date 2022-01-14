@@ -58,7 +58,7 @@ class Actor:
 
     # loading movies from csv, needed to be called before using movie related functions
     def load_movies(self):
-        movies_df = pd.read_csv('movies.csv')
+        movies_df = pd.read_csv('csv/movies.csv')
         movies = []
         movies_df = movies_df[movies_df['actor_id'] == self.imdb_id]
         for i, movies_row in movies_df.iterrows():
@@ -67,7 +67,7 @@ class Actor:
             movie_name = movies_row['name']
             year = movies_row['year']
             rating = movies_row['rating']
-            genres = eval(movies_row['genres'])  # eval -> convert '[ a,b,c ]' from  one String to a list of Strings
+            genres = eval(movies_row['genres'])  # eval -> convert '[ a,b,c ]' from one String to a list of Strings
             move = Movie(actor_id, movie_id, movie_name, year, rating, genres)
             movies.append(move)
 
@@ -75,7 +75,7 @@ class Actor:
 
     def load_awards(self):
 
-        awards_df = pd.read_csv('awards.csv')
+        awards_df = pd.read_csv('csv/awards.csv')
         awards = []
         awards_df = awards_df[awards_df['actor_id'] == self.imdb_id]
         for i, award_row in awards_df.iterrows():
@@ -103,7 +103,7 @@ class Actor:
 
     def calc_average_for_all_years(self):
 
-        df = pd.read_csv('movies.csv')
+        df = pd.read_csv('csv/movies.csv')
         df = df[df['actor_id'] == self.imdb_id]
 
         yr_df = df[['year', 'rating']]
@@ -139,8 +139,7 @@ class Actor:
 
 
 def get_all_actor_info():
-    actors_df = pd.read_csv('actors.csv')
-
+    actors_df = pd.read_csv('csv/actors.csv')
     acts = []
 
     for index, row in actors_df.iterrows():
@@ -158,3 +157,7 @@ def get_all_actor_info():
         acts.append(actor1)
 
     return acts
+
+
+
+

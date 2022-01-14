@@ -65,8 +65,6 @@ class ActorScraper:
 
         self.doc = bs(result.text, "html.parser")
 
-    # def get_birth_date(self):
-    #     return self.doc.find("time")["datetime"]
 
     def get_birth_name(self):
         table = self.doc.find('table', id='overviewTable')
@@ -81,18 +79,13 @@ class ActorScraper:
         table = self.doc.find('table', id='overviewTable')
         nicknames_td = table.find('td', text=['Nickname','Nicknames'])
 
-
-        print(nicknames_td)
         if nicknames_td is None:
             return
 
-        print(nicknames_td)
         nichkname_row = nicknames_td.find_next_sibling()
         nickname = nichkname_row.text
 
         return nickname
-
-
 
     def get_name(self):
         return self.doc.find('h3').findChild().text.strip()
@@ -106,12 +99,6 @@ class ActorScraper:
         if height is None:
             return
         return height.find_next_sibling().text.strip()
-
-    # def get_born_place(self):
-    #
-    #     table = self.doc.find('table', id='overviewTable')
-    #
-    #     place = table.find_all('a')[2]
 
     def get_pic_link(self):
         img = self.doc.find('img', class_='poster')
@@ -129,7 +116,6 @@ class ActorScraper:
         td_born_info = td.find_next_sibling('td')
 
         return td_born_info.text.strip()
-
 
 
 def get_actor_movie_ids(actor_id):
@@ -167,8 +153,7 @@ def get_top50_actor_ids():
 
     return actor_ids
 
-
-# scrape movies, build dataframe and save the dataframe in a csv file (movies.csv)
+# scrape movies, build dataframe and save the dataframe in a csv file (csv/movies.csv)
 def scrape_movies_df(actor_ids):
     columns = ['actor_id', 'movie_id', 'name', 'year', 'rating', 'genres']
     rows = []
@@ -189,10 +174,10 @@ def scrape_movies_df(actor_ids):
             rows.append(row)
 
     df = pd.DataFrame(rows, columns=columns)
-    df.to_csv('movies.csv', index=False)
+    df.to_csv('csv/movies.csv', index=False)
 
 
-# scrape actors, build dataframe and save the dataframe in a csv file (actors.csv)
+# scrape actors, build dataframe and save the dataframe in a csv file (csv/actors.csv)
 def scrape_actors_df(actor_ids):
     columns = ['imdb_id', 'name', 'pic_link', 'pos', 'birth_name', 'birth_info', 'nickname', 'hight', 'bio']
     rows = []
@@ -214,10 +199,10 @@ def scrape_actors_df(actor_ids):
         rows.append(row)
 
     df = pd.DataFrame(rows, columns=columns)
-    df.to_csv('actors.csv', index=False)
+    df.to_csv('csv/actors.csv', index=False)
 
 
-# scrape awards, build dataframe and save the dataframe in a csv file (awards.csv)
+# scrape awards, build dataframe and save the dataframe in a csv file (csv/awards.csv)
 def scrape_awards_df(actor_ids):
     columns = ['actor_id', 'award_name', 'year', 'award_outcome', 'award_description']
     rows = []
@@ -273,23 +258,21 @@ def scrape_awards_df(actor_ids):
                 rows.append(row)
 
     df = pd.DataFrame(rows, columns=columns)
-    df.to_csv('awards.csv', index=False)
+    df.to_csv('csv/awards.csv', index=False)
 
 
 def start_scraping():
     print('Start scraping ...')
-
     actor_ids = get_top50_actor_ids()
-
 
     scrape_actors_df(actor_ids)
     print('finished with actors')
-    #
-    # scrape_movies_df(actor_ids)
-    # print('finished with movies')
-    #
-    # scrape_awards_df(actor_ids)
-    # print('finished with awards')
+
+    scrape_movies_df(actor_ids)
+    print('finished with movies')
+
+    scrape_awards_df(actor_ids)
+    print('finished with awards')
 
     print('Scraping finished')
 

@@ -2,7 +2,7 @@ import pandas as pd
 from flask import Flask, redirect, url_for, render_template
 import numpy as np
 
-from main import get_all_actor_info
+from logic import get_all_actor_info
 from matplotlib.figure import Figure
 import base64
 from io import BytesIO
